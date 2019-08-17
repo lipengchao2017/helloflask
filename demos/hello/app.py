@@ -12,6 +12,7 @@ app = Flask(__name__)
 
 
 # the minimal Flask application
+# 注册路由 视图函数
 @app.route('/')
 def index():
     return '<h1>Hello, World!</h1>'
@@ -36,3 +37,9 @@ def greet(name):
 def hello():
     """Just say hello."""
     click.echo('Hello, Human!')
+
+# 自行测试命令注册
+@app.cli.command()
+def first_flask():
+    """ flask ! """
+    click.echo("flask!")
