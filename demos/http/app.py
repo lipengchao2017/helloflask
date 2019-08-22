@@ -6,6 +6,8 @@
     :license: MIT, see LICENSE for more details.
 """
 import os
+
+# 导入兼容性处理
 try:
     from urlparse import urlparse, urljoin
 except ImportError:
@@ -21,8 +23,9 @@ app.secret_key = os.getenv('SECRET_KEY', 'secret string')
 
 # get name value from query string and cookie
 @app.route('/')
-@app.route('/hello')
+@app.route('/hello', methods=['Get', 'Post'])
 def hello():
+    # request.args['name'] 使用get方法 可以避免400跳转
     name = request.args.get('name')
     if name is None:
         name = request.cookies.get('name', 'Human')
@@ -44,13 +47,30 @@ def hi():
 # use int URL converter
 @app.route('/goback/<int:year>')
 def go_back(year):
-    return 'Welcome to %d!' % (2018 - year)
+    return 'Welcome to %d!' % (2019 - year)
 
 
 # use any URL converter
-@app.route('/colors/<any(blue, white, red):color>')
+@app.route('/colors/<any(blue, white, red, yellow):color>')
 def three_colors(color):
-    return '<p>Love is patient and kind. Love is not jealous or boastful or proud or rude.</p>'
+    if color == "red":
+        #return ",302,{'Location':'http://www.baidu.com'}"
+        return redirect('http://www.baidu.com')
+    else:
+        return '<p>Love is patient and kind. Love is not jealous or boastful or proud or rude.</p>'
+
+
+# 测试第一次请求前钩子 通过装饰器模式 常用来进行一些初始化操作
+#@app.before_first_request
+# 测试请求前钩子 可以用来设置用户最后在线时间
+@app.before_request
+def hooks():
+    print("请求钩子")
+
+# 请求后钩子 可以进行方法请求后的数据库的操作
+#@app.after_request
+#def do_something(h1):
+#    print("after 请求钩子")
 
 
 # return error response
@@ -63,7 +83,7 @@ def teapot(drink):
 
 
 # 404
-@app.route('/404')
+#@app.route('/404')
 def not_found():
     abort(404)
 
@@ -201,7 +221,8 @@ def bar():
 @app.route('/do-something')
 def do_something():
     # do something here
-    return redirect_back()
+    return redirect(request.referrer or url_for("hello"))
+    # return redirect_back()
 
 
 def is_safe_url(target):
@@ -215,6 +236,7 @@ def redirect_back(default='hello', **kwargs):
     for target in request.args.get('next'), request.referrer:
         if not target:
             continue
+        # url的安全验证 is_safe_url用来验证url是否是程序内部的地址
         if is_safe_url(target):
             return redirect(target)
     return redirect(url_for(default, **kwargs))
