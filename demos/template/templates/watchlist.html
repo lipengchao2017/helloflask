@@ -7,11 +7,15 @@
 <body>
 <a href="{{ url_for('index') }}">&larr; Return</a>
 <h2>{{ user.username }}</h2>
+<h3>{{ user['username']}}</h3>
+<!-- 语句 -->
 {% if user.bio %}
-    <i>{{ user.bio }}</i>
+    <!-- 表达式-->
+    <p>{{ user.bio }}</p>
 {% else %}
-    <i>This user has not provided a bio.</i>
+    <p>This user has not provided a bio.</p>
 {% endif %}
+{# 注释 #}
 {# Below is the movie list (this is comment) #}
 <h5>{{ user.username }}'s Watchlist ({{ movies|length }}):</h5>
 <ul>

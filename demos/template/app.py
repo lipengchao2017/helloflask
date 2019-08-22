@@ -34,15 +34,23 @@ movies = [
 
 @app.route('/watchlist')
 def watchlist():
+    # 左边是传入模版中的变量名称 右边是对象的名称
     return render_template('watchlist.html', user=user, movies=movies)
+    # return render_template('watchlist.html', tohello=tohello())
+
+
+def tohello():
+    return "<h1>Hello</h1>"
 
 
 @app.route('/')
 def index():
+    # app.add_template_global(bar())
     return render_template('index.html')
 
 
 # register template context handler
+# 自定义模版上下文的装饰器 会产生模版中使用的全局变量
 @app.context_processor
 def inject_info():
     foo = 'I am foo.'
@@ -56,6 +64,7 @@ def bar():
 
 
 # register template filter
+# 自定义 全局过滤器 会在调用字符的后面加上个音符的图标
 @app.template_filter()
 def musical(s):
     return s + Markup(' &#9835;')
@@ -67,6 +76,10 @@ def baz(n):
     if n == 'baz':
         return True
     return False
+    # 自定义测试器
+    app.jinja_env.tests['bar'] = bar
+    # 自定义过滤器
+    app.jinja_env.filters['smiling'] = smiling
 
 
 @app.route('/watchlist2')

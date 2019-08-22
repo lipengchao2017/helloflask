@@ -1,16 +1,28 @@
+{# 必须写在子模版的开头 #}
 {% extends 'base.html' %}
 {% from 'macros.html' import qux %}
 
+{# 在base.html中使用block占好占位符，然后在子模版页面使用block 插入其内容 #}
 {% block content %}
-{% set name='baz' %}
+    {# 定义变量 #}
+{% set name='bau' %}
 <h1>Template</h1>
 <ul>
     <li><a href="{{ url_for('watchlist') }}">Watchlist</a></li>
     <li>Filter: {{ foo|musical }}</li>
     <li>Global: {{ bar() }}</li>
     <li>Test: {% if name is baz %}I am baz.{% endif %}</li>
-    <li>Macro: {{ qux(amount=1) }}</li>
+    <li>Get global : {{ foo }}</li>
+    {# 测试jinja的内置函数 #}
+    {# <li>range()</li> #}
+    {# <li>lipsum()</li> #}
+    <li>Macro: {{ qux(amount=3) }}</li>
     <li><a href="{{ url_for('watchlist_with_static') }}">Watchlist with image and styles.</a></li>
     <li><a href="{{ url_for('just_flash') }}">Flash something</a></li>
+    <li>
+        {% filter upper %}
+            This text becomes uppercase .
+        {% endfilter %}
+    </li>
 </ul>
 {% endblock %}
